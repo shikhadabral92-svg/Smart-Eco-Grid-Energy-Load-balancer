@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy & Load Management | Smart Eco-Grid</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="hero-content">
+            <p class="eyebrow">SMART ENERGY • SMART FUTURE</p>
+            <h1>ENERGY & LOAD<br>MANAGEMENT</h1>
+            <p class="header-subtitle">
+                Renewable Energy | Power Distribution | Load Allocation
+            </p>
+        </div>
+    </header>
+
+    <nav class="dashboard-navigation">
+        <a href="1.html">Dashboard</a>
+        <a href="energy.html">Energy & Load Management</a>
+        <a href="fault.html">Fault Management</a>
+        <a href="repair.html">Repair Teams & Routes</a>
+        <a href="map.html">Grid Map</a>
+    </nav>
+
+    <main class="dashboard">
+
+        <!-- SIMULATION CONTROL -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">CONTROL PANEL</p>
+                    <h2>Grid Simulation</h2>
+                    <p>Start, pause or reset the simulated readings.</p>
+                </div>
+            </div>
+
+            <div class="simulation-panel">
+                <div class="simulation-buttons">
+                    <button type="button" id="startSimulation">Start Simulation</button>
+                    <button type="button" id="pauseSimulation" class="button-secondary" disabled>Pause</button>
+                    <button type="button" id="resetSimulation" class="button-outline">Reset Values</button>
+                </div>
+                <p id="simulationMessage" class="small-text">Simulation is currently paused.</p>
+            </div>
+        </section>
+
+        <!-- ENERGY GENERATION -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">RENEWABLE SOURCES</p>
+                    <h2>Energy Generation</h2>
+                    <p>Compare the contribution of each energy source.</p>
+                </div>
+                <span class="unit-label">Unit: kW</span>
+            </div>
+
+            <div class="source-grid">
+                <article class="source-card">
+                    <div class="source-icon">S</div>
+                    <div>
+                        <h3>Solar</h3>
+                        <strong id="solarGeneration">1000 kW</strong>
+                    </div>
+                </article>
+
+                <article class="source-card">
+                    <div class="source-icon">H</div>
+                    <div>
+                        <h3>Hydro</h3>
+                        <strong id="hydroGeneration">800 kW</strong>
+                    </div>
+                </article>
+
+                <article class="source-card">
+                    <div class="source-icon">W</div>
+                    <div>
+                        <h3>Wind</h3>
+                        <strong id="windGeneration">700 kW</strong>
+                    </div>
+                </article>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Generation by Source</h3>
+                        <p>Horizontal comparison of renewable energy output.</p>
+                    </div>
+                </div>
+                <canvas id="generationChart" role="img"
+                    aria-label="Energy generation by source"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Generation vs. Demand</h3>
+                        <p>Check whether generation can meet demand.</p>
+                    </div>
+                </div>
+                <canvas id="generationDemandChart" role="img"
+                    aria-label="Generation compared with demand"></canvas>
+            </div>
+        </section>
+
+        <!-- POWER FLOW -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">ELECTRICITY DISTRIBUTION</p>
+                    <h2>Power Flow</h2>
+                    <p>Follow power from generation to connected loads.</p>
+                </div>
+            </div>
+
+            <div class="flow-layout">
+                <div class="flow-stage generation-stage">
+                    <span class="stage-number">01</span>
+                    <h3>Generation</h3>
+                    <strong id="flowGeneration">2500 kW</strong>
+                    <p>Solar, hydro and wind</p>
+                </div>
+
+                <div class="flow-connector"><span>↓</span></div>
+
+                <div class="flow-stage transformer-stage">
+                    <span class="stage-number">02</span>
+                    <h3>Transformer</h3>
+                    <strong id="flowTransformer">2500 kW</strong>
+                    <p>Power transfer stage</p>
+                </div>
+
+                <div class="flow-connector"><span>↓</span></div>
+
+                <div class="flow-stage distribution-stage">
+                    <span class="stage-number">03</span>
+                    <h3>Distribution</h3>
+                    <strong id="flowDistributed">2200 kW</strong>
+                    <p>Power supplied to loads</p>
+                </div>
+
+                <div class="flow-connector"><span>↓</span></div>
+
+                <div class="flow-loads" id="flowLoads"></div>
+            </div>
+
+            <p class="small-text flow-note">
+                This diagram represents simulated power flow,
+                not a live electrical connection.
+            </p>
+        </section>
+
+        <!-- LOAD MANAGEMENT -->
+        <section class="section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">LOAD MONITORING</p>
+                    <h2>Energy and Load Management</h2>
+                    <p>Compare requested power with the power actually supplied.</p>
+                </div>
+            </div>
+
+            <div class="load-summary">
+                <div>
+                    <span>Total Required</span>
+                    <strong id="totalRequired">2200 kW</strong>
+                </div>
+                <div>
+                    <span>Total Supplied</span>
+                    <strong id="totalSupplied">2200 kW</strong>
+                </div>
+                <div>
+                    <span>Limited Loads</span>
+                    <strong id="limitedLoads">0</strong>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-heading">
+                    <div>
+                        <h3>Required vs. Supplied by Load</h3>
+                        <p>Demand and allocation for each connected load.</p>
+                    </div>
+                </div>
+
+                <canvas id="loadAllocationChart" role="img"
+                    aria-label="Required and supplied power by load"></canvas>
+
+                <div class="chart-legend">
+                    <span><i class="legend-dot required-dot"></i>Required</span>
+                    <span><i class="legend-dot supplied-dot"></i>Supplied</span>
+                </div>
+            </div>
+
+            <!-- ADD LOAD FORM -->
+            <div class="form-card">
+                <h3>Add a New Load</h3>
+                <p class="form-description">Enter a load and its priority.</p>
+
+                <form id="loadForm" class="form-grid">
+                    <div class="form-group">
+                        <label for="loadName">Load Name</label>
+                        <input id="loadName" type="text"
+                            placeholder="e.g. Water Pump" required maxlength="50">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loadPower">Required Power (kW)</label>
+                        <input id="loadPower" type="number"
+                            min="1" max="100000" placeholder="e.g. 250" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loadPriority">Priority</label>
+                        <select id="loadPriority" required>
+                            <option value="3">3 - Critical</option>
+                            <option value="2">2 - Important</option>
+                            <option value="1">1 - Normal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-button">
+                        <button type="submit">Add Load</button>
+                    </div>
+                </form>
+
+                <p class="small-text">Priority 3 is highest; priority 1 is lowest.</p>
+            </div>
+
+            <!-- CONNECTED LOADS -->
+            <div class="table-card">
+                <div class="table-heading">
+                    <h3>Connected Loads</h3>
+                    <span id="loadCount">4 loads</span>
+                </div>
+
+                <div class="table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Load</th>
+                                <th>Priority</th>
+                                <th>Required</th>
+                                <th>Supplied</th>
+                                <th>Allocation</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loadTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <strong>Smart Eco-Grid Management System</strong>
+        <p>Energy &amp; Load Management</p>
+    </footer>
+
+    <script type="module" src="./script.js"></script>
+
+</body>
+</html>

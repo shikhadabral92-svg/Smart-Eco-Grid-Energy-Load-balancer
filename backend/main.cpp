@@ -34,14 +34,14 @@ manager.addConsumer(Consumer("Emergency Center", HIGH, 250));
     faultManager.loadFaultsFromFile();
 
     int faultID1 = 1;
-    string location1 = "Substation B";
+    string location1 = "Water Plant";
     double voltage1 = 185;
     double load1 = 80;
     double latitude1 = 30.3165;
     double longitude1 = 78.0322;
 
     int faultID2 = 2;
-    string location2 = "Substation C";
+    string location2 = "Telecom Hub";
     double voltage2 = 220;
     double load2 = 120;
     double latitude2 = 30.3250;
@@ -166,6 +166,15 @@ else
 
     outputJson["shortestPathNodes"] =
         pathResult.path;
+        outputJson["nodeNames"] = {
+    {"N0", "Power Plant"},
+    {"N1", "Metro Hospital"},
+    {"N2", "Telecom Hub"},
+    {"N3", "Water Plant"},
+    {"N4", "City Schools"},
+    {"N5", "Offices"},
+    {"N6", "Suburbs"}
+};
 outputJson["selectedRepairTeam"] =
     pathResult.selectedTeamName;
 

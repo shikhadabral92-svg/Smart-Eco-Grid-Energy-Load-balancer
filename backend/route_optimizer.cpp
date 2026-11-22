@@ -2,7 +2,7 @@
 #include <limits>
 #include <queue>
 #include <algorithm>
-
+#include <string>
 using namespace std;
 
 DijkstraResult RouteOptimizer::findShortestPath(
@@ -12,7 +12,9 @@ DijkstraResult RouteOptimizer::findShortestPath(
     int endNode
 )
 {
-    DijkstraResult result = {false, 0, {}};
+    DijkstraResult result{};
+result.success = false;
+result.totalDistance = 0;
 
     if (nodeCount <= 0 ||
         graph.size() != static_cast<size_t>(nodeCount) ||

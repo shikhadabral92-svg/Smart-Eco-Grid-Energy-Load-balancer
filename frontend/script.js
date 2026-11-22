@@ -4,12 +4,16 @@
 // ------ Initial Data -----
 import gsap from "gsap";
 
+
 const initialLoads = [
-    { name: "Hospital", power: 800, priority: 3 },
-    { name: "College", power: 600, priority: 2 },
-    { name: "Street Lights", power: 300, priority: 1 },
-    { name: "Shopping Complex", power: 500, priority: 1 }
+    { name: "Metro Hospital", power: 800, priority: 3 },
+    { name: "Telecom Hub", power: 350, priority: 2 },
+    { name: "Water Plant", power: 450, priority: 3 },
+    { name: "City Schools", power: 300, priority: 2 },
+    { name: "Offices", power: 400, priority: 1 },
+    { name: "Suburbs", power: 500, priority: 1 }
 ];
+
 
 const initialTeams = [
     { name: "Team A", available: true },
@@ -471,21 +475,19 @@ function updatePowerDistribution() {
 
 // -------------------- Horizontal Bar Charts --------------------
 
+
+// -------------------- Horizontal Bar Charts --------------------
+
 function drawHorizontalChart(canvasId, items, paired) {
     const canvas = getElement(canvasId);
-
     if (!canvas) return;
 
     const context = canvas.getContext("2d");
-
     if (!context) return;
 
-    const width = Math.max(canvas.clientWidth, 280);
-
-    const rowCount = items.length;
-    const rowHeight = paired ? 54 : 47;
-    const height = Math.max(220, rowCount * rowHeight + 65);
-
+    const width = Math.max(canvas.clientWidth, 320);
+    const rowHeight = paired ? 105 : 85;
+    const height = Math.max(300, items.length * rowHeight + 80);
     const pixelRatio = window.devicePixelRatio || 1;
 
     canvas.style.height = height + "px";
@@ -495,19 +497,14 @@ function drawHorizontalChart(canvasId, items, paired) {
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
     context.clearRect(0, 0, width, height);
 
-    const leftMargin = Math.min(
-        150,
-        Math.max(95, width * 0.30)
-    );
+    const leftMargin = paired ? 155 : 115;
+    const rightMargin = 65;
+    const topMargin = 35;
+    const bottomMargin = 45;
 
-    const rightMargin = 55;
-    const topMargin = 24;
-    const bottomMargin = 34;
-
-    const chartWidth = Math.max(
-        50,
-        width - leftMargin - rightMargin
-    );
+    const barStart = paired ? leftMargin + 75 : leftMargin;
+    const barAreaWidth = Math.max(30, width - barStart - rightMargin);
+    const chartHeight = height - topMargin - bottomMargin;
 
     const values = [];
 
@@ -521,130 +518,161 @@ function drawHorizontalChart(canvasId, items, paired) {
     });
 
     const largestValue = Math.max(...values, 1);
+    const step = Math.pow(10, Math.floor(Math.log10(largestValue)));
+    const maximum = Math.ceil(largestValue / step) * step;
 
-    // Use a readable rounded scale.
-    const scaleStep = Math.pow(
-        10,
-        Math.floor(Math.log10(largestValue))
-    );
-
-    const maximum = Math.ceil(
-        largestValue / scaleStep
-    ) * scaleStep;
-
-    const chartHeight = height - topMargin - bottomMargin;
-
-    context.font = "11px Arial, sans-serif";
-    context.textBaseline = "middle";
-
-    // Vertical grid lines and scale labels.
+    // Grid lines and scale
     for (let tick = 0; tick <= 4; tick++) {
-        const x = leftMargin + (chartWidth * tick / 4);
-        const value = Math.round(maximum * tick / 4);
+        const x = barStart + barAreaWidth * tick / 4;
 
         context.beginPath();
-        context.strokeStyle = "#e2e8e2";
+        context.strokeStyle = "#294653";
         context.lineWidth = 1;
-        context.moveTo(x, topMargin - 5);
+        context.moveTo(x, topMargin - 8);
         context.lineTo(x, height - bottomMargin);
         context.stroke();
 
-        context.fillStyle = "#6b756e";
+        context.fillStyle = "#000000";
+        context.font = "bold 13px Arial";
         context.textAlign = "center";
-        context.fillText(String(value), x, height - 16);
+        context.fillText(
+            String(Math.round(maximum * tick / 4)),
+            x,
+            height - 20
+        );
     }
 
     items.forEach(function (item, index) {
         const centerY = topMargin +
-            (chartHeight / rowCount) * (index + 0.5);
+            (chartHeight / items.length) * (index + 0.5);
 
-        context.textAlign = "right";
-        context.fillStyle = "#34473a";
-        context.font = "12px Arial, sans-serif";
-
-        context.fillText(
-            item.label,
-            leftMargin - 10,
-            paired ? centerY - 7 : centerY,
-            leftMargin - 18
-        );
+        context.fillStyle = "#000000";
+        context.font = "bold 14px Arial";
 
         if (paired) {
-            const barHeight = 10;
-            const requiredWidth =
-                chartWidth * (item.required || 0) / maximum;
-            const suppliedWidth =
-                chartWidth * (item.supplied || 0) / maximum;
+            // Load name in a separate left-side column
+            context.textAlign = "right";
+            context.fillText(
+                item.label,
+                leftMargin - 12,
+                centerY + 5,
+                leftMargin - 20
+            );
 
-            context.fillStyle = "#b9c9ba";
+            const barHeight = 17;
+
+            const requiredWidth =
+                barAreaWidth * (item.required || 0) / maximum;
+
+            const suppliedWidth =
+                barAreaWidth * (item.supplied || 0) / maximum;
+
+            // Required label
+            context.textAlign = "left";
+            context.font = "bold 11px Arial";
+            context.fillStyle = "#000000";
+            context.fillText("Required", leftMargin + 5, centerY - 24);
+
+            // Required bar
+            context.fillStyle = "#3498db";
             context.fillRect(
-                leftMargin,
-                centerY - 16,
+                barStart,
+                centerY - 19,
                 requiredWidth,
                 barHeight
             );
 
-            context.fillStyle = "#4f7657";
+            // Required value
+            context.fillStyle = "#000000";
+            context.font = "bold 11px Arial";
+            context.fillText(
+                (item.required || 0) + " kW",
+                Math.min(barStart + requiredWidth + 5, width - 55),
+                centerY - 6
+            );
+
+            // Supplied label
+            context.fillStyle = "#000000";
+            context.font = "bold 11px Arial";
+            context.fillText("Supplied", leftMargin + 5, centerY + 18);
+
+            // Supplied bar
+            context.fillStyle = "#00bfa5";
             context.fillRect(
-                leftMargin,
-                centerY + 1,
+                barStart,
+                centerY + 23,
                 suppliedWidth,
                 barHeight
             );
 
-            context.textAlign = "left";
-            context.fillStyle = "#34473a";
-            context.font = "10px Arial, sans-serif";
-
+            // Supplied value
+            context.fillStyle = "#000000";
+            context.font = "bold 11px Arial";
             context.fillText(
-                String(item.required || 0),
-                Math.min(leftMargin + requiredWidth + 4, width - 27),
-                centerY - 11
+                (item.supplied || 0) + " kW",
+                Math.min(barStart + suppliedWidth + 5, width - 55),
+                centerY + 36
             );
 
-            context.fillText(
-                String(item.supplied || 0),
-                Math.min(leftMargin + suppliedWidth + 4, width - 27),
-                centerY + 6
-            );
         } else {
-            const barHeight = Math.min(24, chartHeight / rowCount * 0.5);
-            const barWidth = chartWidth * (item.value || 0) / maximum;
+            const barHeight = 36;
+            const barWidth =
+                barAreaWidth * (item.value || 0) / maximum;
 
-            context.fillStyle = item.color || "#789b7d";
+            const gradient = context.createLinearGradient(
+                barStart, 0,
+                barStart + Math.max(barWidth, 1), 0
+            );
 
+            gradient.addColorStop(0, item.color || "#00bfa5");
+            gradient.addColorStop(1, "#38d9c0");
+
+            context.fillStyle = gradient;
             context.fillRect(
-                leftMargin,
+                barStart,
                 centerY - barHeight / 2,
                 barWidth,
                 barHeight
             );
 
             context.textAlign = "left";
-            context.fillStyle = "#26352d";
-            context.font = "bold 11px Arial, sans-serif";
+            context.fillStyle = "#000000";
+            context.font = "bold 14px Arial";
 
             context.fillText(
-                String(item.value || 0) + " kW",
-                Math.min(leftMargin + barWidth + 5, width - 42),
+                (item.value || 0) + " kW",
+                Math.min(barStart + barWidth + 7, width - 55),
                 centerY
+            );
+
+            context.textAlign = "right";
+            context.fillText(
+                item.label,
+                leftMargin - 12,
+                centerY,
+                leftMargin - 20
             );
         }
     });
 }
 
+
 function drawAllCharts() {
+
+    // Renewable energy generation
     drawHorizontalChart("generationChart", [
-        { label: "Solar", value: solar, color: "#789b7d" },
-        { label: "Hydro", value: hydro, color: "#638b70" },
-        { label: "Wind", value: wind, color: "#9ab49c" }
+        { label: "Solar", value: solar, color: "#f5b942" },
+        { label: "Hydro", value: hydro, color: "#3498db" },
+        { label: "Wind", value: wind, color: "#9b8cf5" }
     ], false);
 
+    // Generation versus demand
     drawHorizontalChart("generationDemandChart", [
-        { label: "Generation", value: generation, color: "#4f7657" },
-        { label: "Demand", value: demand, color: "#b9a36b" }
+        { label: "Generation", value: generation, color: "#00bfa5" },
+        { label: "Demand", value: demand, color: "#f5a742" }
     ], false);
 
+    // Required versus supplied load
     drawHorizontalChart(
         "loadAllocationChart",
         loads.map(function (load) {
@@ -657,6 +685,7 @@ function drawAllCharts() {
         true
     );
 }
+
 // -------------------- Fault Management --------------------
 
 const faultForm = getElement("faultForm");

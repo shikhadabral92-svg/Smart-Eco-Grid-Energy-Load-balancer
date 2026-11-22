@@ -38,6 +38,7 @@ RepairTeamManager::RepairTeamManager()
     teams = new RepairTeam[5];
 }
 
+
 // Get number of teams
 int RepairTeamManager::getTeamCount() const
 {
